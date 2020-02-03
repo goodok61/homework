@@ -14,7 +14,6 @@ let money,
   addExpenses = prompt('Перечислите возможные расходы за рассчитываемый период через запятую'),
   nameExpenses = addExpenses.split(', '),
   countExpenses = nameExpenses.length,
-  budgetMonth = 0;
 
 let start = function(){
   do {
