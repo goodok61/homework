@@ -27,7 +27,6 @@ deposit = confirm('Есть ли у вас депозит в банке?'),
 addExpenses = prompt('Перечислите возможные расходы за рассчитываемый период через запятую'),
 nameExpenses = addExpenses.split(', '),
 countExpenses = nameExpenses.length,
-budgetMonth = 0;
 
 /* Думал что доработал, а оказалось сделал не совсем верно
 под коменнтом сделаю то что требовалось от предидущего задания чтобы выполнить пункт 1 */
@@ -59,7 +58,7 @@ const getTargetMonth = function(a, b){
   return Math.ceil(a / b); 
 } 
 
- let budgetDay = Math.floor(budgetMonth / 30);
+ let budgetDay = Math.floor(accumulatedMonth / 30);
 
 let showTypeOf = function(data) {
   console.log(typeof(data));
