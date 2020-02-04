@@ -1,60 +1,31 @@
 'use strict'
 /*
-+   1) Функцию showTypeof и вызов функции удаляем
-+   2) В объект appData добавить свойство budget которое будет принимать значение money
-+   3) В объект appData добавить свойства budgetDay, budgetMonth и expensesMonth, изначально равные нулю
-+   4) Функции getExpensesMonth, getAccumulatedMonth, getTargetMonth, getStatusIncome - сделать методами объекта AppData
-+   5) После этого поправить весь проект, чтобы он работал, а именно
-    Везде где вызывались наши функции поправить обращение через объект, например
-    let expensesMonth = appData.getExpensesMonth();
-
-Не переходить к следующим пунктам, пока не выполнишь предыдущие.
-Программа на данном этапе должна работать.
-
-+   6) Сразу после объекта выполните вызов appData.asking();
-+   7) Перенести цикл из метода getExpensesMonth в метод asking, и переписать цикл таким образом чтобы результат записывался в объект appData.expenses
-    в формате:
-      expenses: {
-        “ответ на первый вопрос”: “ответ на второй вопрос”,
-        “ответ на первый вопрос”: “ответ на второй вопрос”
-      }
-    временные условия которые мы писали
-    if (i === 0) {
-      expenses1 = prompt('Введите обязательную статью расходов?', 'Кварплата');
-    } else {
-      expenses2 = prompt('Введите обязательную статью расходов?', 'Бензин');
-    }
-    уже не нужны, вопрос задается каждый цикл
-    Обратите внимание Если на вопрос "Введите обязательную статью расходов?"
-    ответить 2 раза одинаково, значения свойства просто будут перезаписаны, для проверки отвечайте всегда по разному.(очень частая ошибка)
-    Проследите чтобы тип данных значения свойств были числом!
-      Пример результата:
-      expenses: {
-        “Квартплата”: 5000,
-        “Детский сад”: 2000
-      }
-+   8) Переписать метод getExpensesMonth: с помощью цикла считаем сумму всех обязательных расходов и сохраняем результат в свойство expensesMonth нашего объекта
-    для того, чтобы посчитать сумму используйте цикл
-    for in
-+   9) getAccumulatedMonth переименовать в getBudget.Этот метод будет высчитывать значения свойств budgetMonth и budgetDay, чтобы вычислить значения используем только свойства       объекта(никаких внешних переменных)
-+   10) В методах getTargetMonth и getStatusIncome исправить переменные, все значения получаем от нашего объекта appData
-+   11) Вызвать все необходимые методы после объекта, чтобы корректно считались все данные(порядок очень важен).
-+   12) В консоль вывести:
-      —Расходы за месяц
-      — За какой период будет достигнута цель(в месяцах)
-      — Уровень дохода
-    Все остальное почистить в программе у нас всего две переменных money и appData
-    И две функции start и возможно isNumber
-13) Используя цикл
-for in для объекта(appData), вывести в консоль сообщение "Наша программа включает в себя данные: "(вывести все свойства и значения)
+1) Сделать проверку при получении данных:
+   - наименование дополнительного источника заработка
+   - сумма дополнительного заработка
+   - ввод статьи обязательных расходов
+   - годовой процент депозита
+   - сумма депозита
+Что значит проверка данных: где должен быть текст там только текст, где цифры только цифры!
+Если проверку не прошло, то переспрашивать!
+2) Возможные расходы (addExpenses) вывести строкой в консоль каждое слово с большой буквы слова разделены запятой и пробелом
+Пример (Интернет, Такси, Коммунальные расходы)
 */
 let isNumber = function (n) {
   return !isNaN(parseFloat(n)) && isFinite(n)
 };
+
+function isEmpty(str) {
+  if (str.trim() == ''){
+    return true;
+  }
+  return false;
+}
+
 let money,
   start = function () {
     do {
-      money = prompt('Ваш месячный доход?', 50000);
+      money = +prompt('Ваш месячный доход?', 50000);
     }
     while (!isNumber(money));
   };
@@ -67,6 +38,8 @@ let appData = {
   expenses: {},
   addExpenses: [],
   deposit: false,
+  percentDeposit: 0,
+  moneyDeposit: 0,
   mission: 50000,
   period: 3,
   budget: money,
@@ -74,12 +47,41 @@ let appData = {
   budgetMonth: 0,
   expensesMonth: 0,
   asking: function () {
+
+    if (confirm('Есть ли у вас дополнительный заработок?')) {
+      
+      let itemIncome,
+        cashIncome;
+      do {
+        itemIncome = prompt('Какой у вас дополнительный заработок?', 'Таксую');
+      }
+      while (isEmpty(itemIncome));
+
+      do {
+        cashIncome = prompt('Сколько в месяц вы на этом зарабатываете?', 10000);
+      }
+      while (!isNumber(cashIncome));
+
+      appData.income[itemIncome] = cashIncome;
+    }
+
     let addExpenses = prompt('Перечислите возможные расходы за рассчитываемый период через запятую', 'qwe, asd, zxc');
     appData.addExpenses = addExpenses.toLowerCase().split(', ');
     appData.deposit = confirm('Есть ли у вас депозит в банке?');
     for (let i = 0; i < 2; i++) {
-      let expensesName = prompt('Введите обязательную статью расходов?');
-      let expensesAmount = +prompt('Во сколько это обойдется?');
+
+
+      let expensesName,
+        expensesAmount;
+      do {
+        expensesName = prompt('Введите обязательную статью расходов?');
+      }
+      while (isEmpty(expensesName));
+
+      do {
+        expensesAmount = +prompt('Во сколько это обойдется?');
+      }
+      while (!isNumber(expensesAmount));
       appData.expenses[expensesName] = expensesAmount;
     }
   },
@@ -122,9 +124,26 @@ let appData = {
     for (const key in appData) {
       console.log(key + " " + appData[key]);
     }
+  },
+  getInfoDeposit: function(){
+    if (appData.deposit){
+      do {
+        appData.percentDeposit = prompt('Какой годовой процент?', 10);
+      }
+      while (!isNumber(appData.percentDeposit));
+      do {
+        appData.moneyDeposit = prompt('Какая сумма заложена?', 10000);
+      }
+      while (!isNumber(appData.moneyDeposit));
+    }
+  },
+  calcSavedMoney: function(){
+    return appData.budgetMonth * appData.period;
+  },
+  consoleExpenses: function(){
+    const b = appData.addExpenses.map(item => item[0].toUpperCase() + item.slice(1));
+    console.log(b.join(', '));
   }
-
-
 }
 
 appData.asking();
@@ -133,4 +152,6 @@ appData.getBudget();
 console.log("Расходы за месяц составляют: " + appData.expensesMonth);
 appData.getTargetMonth();
 appData.getStatusIncome();
-appData.result();
+//appData.result();
+appData.getInfoDeposit();
+appData.consoleExpenses();
