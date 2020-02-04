@@ -1,3 +1,4 @@
+'use strict'
 /*
 +   1) Функцию showTypeof и вызов функции удаляем
 +   2) В объект appData добавить свойство budget которое будет принимать значение money
@@ -79,7 +80,6 @@ let appData = {
     for (let i = 0; i < 2; i++) {
       let expensesName = prompt('Введите обязательную статью расходов?');
       let expensesAmount = +prompt('Во сколько это обойдется?');
-      appData.expenses[expensesName] = expensesName;
       appData.expenses[expensesName] = expensesAmount;
     }
   },
@@ -91,12 +91,12 @@ let appData = {
     appData.expensesMonth = a;
   },
   getBudget: function () {
-    appData.budgetMonth = money - appData.expensesMonth;
+    appData.budgetMonth = appData.budget - appData.expensesMonth;
     appData.budgetDay = appData.budgetMonth / 30;
   },
 
-  getTargetMonth: function (a, b) {
-    let x = Math.ceil(a / b);
+  getTargetMonth: function () {
+    let x = Math.ceil(appData.mission / appData.budgetMonth);
 
     if (x <= 0) {
       console.log('Цель не будет достигнута');
@@ -104,13 +104,13 @@ let appData = {
       console.log('Цель будет достигнута за: ' + x + ' месяцев');
     };
   },
-  getStatusIncome: function (a) {
+  getStatusIncome: function () {
     {
-      if (a > 1200) {
+      if (appData.budgetDay > 1200) {
         console.log('У вас высокий уровень дохода');
-      } else if ((a <= 1200) && (a >= 600)) {
+      } else if ((appData.budgetDay <= 1200) && (appData.budgetDay >= 600)) {
         console.log('У вас средний уровень дохода');
-      } else if ((a < 600) && (a >= 0)) {
+      } else if ((appData.budgetDay < 600) && (appData.budgetDay >= 0)) {
         console.log('К сожалению у вас уровень дохода ниже среднего');
       } else {
         console.log('Что то пошло не так');
@@ -127,10 +127,10 @@ let appData = {
 
 }
 
-appData.asking()
+appData.asking();
 appData.getExpensesMonth();
-appData.getBudget()
+appData.getBudget();
 console.log("Расходы за месяц составляют: " + appData.expensesMonth);
-appData.getTargetMonth(appData.mission, appData.budgetMonth);
-appData.getStatusIncome(appData.budgetDay);
+appData.getTargetMonth();
+appData.getStatusIncome();
 appData.result();
