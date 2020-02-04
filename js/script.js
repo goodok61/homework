@@ -13,11 +13,11 @@ let money,
   deposit = confirm('Есть ли у вас депозит в банке?'),
   addExpenses = prompt('Перечислите возможные расходы за рассчитываемый период через запятую'),
   nameExpenses = addExpenses.split(', '),
-  countExpenses = nameExpenses.length,
+  countExpenses = nameExpenses.length;
 
 let start = function(){
   do {
-    money = prompt('Ваш месячный доход?');
+    money = +prompt('Ваш месячный доход?');
   }
   while (!isNumber(money));
 };
