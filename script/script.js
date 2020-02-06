@@ -1,15 +1,14 @@
-'use strict'
+'use strict';
 /*
-1) Сделать проверку при получении данных:
-   - наименование дополнительного источника заработка
-   - сумма дополнительного заработка
-   - ввод статьи обязательных расходов
-   - годовой процент депозита
-   - сумма депозита
-Что значит проверка данных: где должен быть текст там только текст, где цифры только цифры!
-Если проверку не прошло, то переспрашивать!
-2) Возможные расходы (addExpenses) вывести строкой в консоль каждое слово с большой буквы слова разделены запятой и пробелом
-Пример (Интернет, Такси, Коммунальные расходы)
+Задание по проекту, получить каждый элемент в отдельную переменную:
+
+Кнопку "Рассчитать"через id
+Кнопки“ + ”(плюс) через Tag, каждую в своей переменной.
+Чекбокс по id через querySelector
+Поля для ввода возможных доходов(additional_income - item) при помощи querySelectorAll
+Каждый элемент в правой части программы через класс, которые имеют в имени класса "-value", начиная с class = "budget_day-value"
+и заканчивая class = "target_month-value" >
+Оставшиеся поля через querySelector каждый в отдельную переменную: поля ввода(input) с левой стороны и не забудьте про range.
 */
 let isNumber = function (n) {
   return !isNaN(parseFloat(n)) && isFinite(n)
@@ -27,11 +26,34 @@ let money,
     do {
       money = +prompt('Ваш месячный доход?', 50000);
     }
-    while (!isNumber(money));
+    while (!isNumber(+money));
   };
 
 start();
+let submit = document.getElementById('#start'),
+  plusIncome = document.getElementsByTagName('button')[0],
+  plusExpenses = document.getElementsByTagName('button')[1],
+  depositCheck = document.querySelector('#deposit-check'),
+  additionalIncome = document.querySelectorAll('.additional_income-item'),
+  budgetDayValue = documet.querySelector('.budget_day-value'),
+  expensesMonthValue = documet.querySelector('.budget_day-value'),
+  additionalIncomeValue = documet.querySelector('.budget_day-value'),
+  additionalExpensesValue = documet.querySelector('.budget_day-value'),
+  incomePeriodValue = documet.querySelector('.budget_day-value'),
+  targetMonthValue = documet.querySelector('.budget_day-value'),
 
+  salaryAmount = documet.querySelector('.salary-amount'),
+  incomeTitle = documet.querySelector('.income-title'),
+  incomeAmount = documet.querySelector('.income-amount'),
+  expensesTitle = documet.querySelector('.expenses-title'),
+  expensesAmount = documet.querySelector('.expenses-amount'),
+  additionalExpensesItem = documet.querySelector('.additional_expenses-item'),
+  depositBank = documet.querySelector('.deposit-bank'),
+  depositAmount = documet.querySelector('.deposit-amount'),
+  depositPercent = documet.querySelector('.deposit-percent'),
+  targetAmount = documet.querySelector('.target-amount'),
+  periodSelect = documet.querySelector('.period-select');
+  
 let appData = {
   income: {},
   addIncome: [],
@@ -62,7 +84,7 @@ let appData = {
       }
       while (!isNumber(cashIncome));
 
-      appData.income[itemIncome] = cashIncome;
+      appData.income[itemIncome] = +cashIncome;
     }
 
     let addExpenses = prompt('Перечислите возможные расходы за рассчитываемый период через запятую', 'qwe, asd, zxc');
@@ -130,11 +152,11 @@ let appData = {
       do {
         appData.percentDeposit = prompt('Какой годовой процент?', 10);
       }
-      while (!isNumber(appData.percentDeposit));
+      while (!isNumber(+appData.percentDeposit));
       do {
         appData.moneyDeposit = prompt('Какая сумма заложена?', 10000);
       }
-      while (!isNumber(appData.moneyDeposit));
+      while (!isNumber(+appData.moneyDeposit));
     }
   },
   calcSavedMoney: function(){
