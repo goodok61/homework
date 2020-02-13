@@ -6,7 +6,7 @@
 4) +  Число под полоской (input type range) должно меняться в зависимости от позиции range, используем событие input.
 5) +  Добавить обработчик события внутри метода showResult, который будет отслеживать период и сразу менять значение в поле “Накопления за период” (После нажатия кнопки рассчитать, если меняем ползунок в range, “Накопления за период” меняются динамически аналогично 4-ому пункту)
 6) +  Запретить нажатие кнопки Рассчитать пока поле Месячный доход пустой, проверку поля Месячный доход в методе Start убрать.
-7) Реализовать так, чтобы инпуты добавлялись пустые без value при добавлении новых полей в обязательных расходах и дополнительных доходах
+7) +  Реализовать так, чтобы инпуты добавлялись пустые без value при добавлении новых полей в обязательных расходах и дополнительных доходах
 8) Поля с placeholder="Наименование" разрешить ввод только русских букв пробелов и знаков препинания
 9) Поля с placeholder="Сумма" разрешить ввод только цифр
 */
@@ -49,7 +49,6 @@ let start = document.getElementById('start'),
   periodSelect = document.querySelector('.period-select'),
   periodAmount = document.querySelector('.period-amount');
 
-
   let appData = {
   income: {},
   addIncome: [],
@@ -81,7 +80,6 @@ let start = document.getElementById('start'),
     appData.getInfoDeposit();
     appData.consoleExpenses();
 
-
     appData.showResult();
   },
   showResult: function(){
@@ -92,10 +90,14 @@ let start = document.getElementById('start'),
     additionalIncomeValue.value = appData.addIncome.join(', ');
     targetMonthValue.value = Math.ceil(appData.getTargetMonth());
     incomePeriodValue.value = appData.calcSavedMoney();
-    periodSelect.addEventListener('input', appData.start);
+    periodSelect.addEventListener('input', function(){
+      incomePeriodValue.value = appData.calcSavedMoney();
+    });
   },
   addExpensesBlock: function (){
     let cloneExpensesItem = expensesItems[0].cloneNode(true);
+    cloneExpensesItem.querySelector('.expenses-title').value = '';
+    cloneExpensesItem.querySelector('.expenses-amount').value = '';
     expensesItems[0].parentNode.insertBefore(cloneExpensesItem, plusExpenses);
     expensesItems = document.querySelectorAll('.expenses-items');
     if (expensesItems.length === 3){
@@ -104,6 +106,8 @@ let start = document.getElementById('start'),
   },
   addIncomeBlock: function () {
     let cloneIncomeItem = incomeItems[0].cloneNode(true);
+    cloneIncomeItem.querySelector('.income-title').value = '';
+    cloneIncomeItem.querySelector('.income-amount').value = '';
     incomeItems[0].parentNode.insertBefore(cloneIncomeItem, plusIncome);
     incomeItems = document.querySelectorAll('.income-items');
     if (incomeItems.length === 3) {
@@ -149,6 +153,7 @@ let start = document.getElementById('start'),
     }*/
   },
   getAddExpenses: function(){
+    appData.addExpenses = [];
     let addExpenses = additionalExpensesItem.value.split(',');
     addExpenses.forEach(function(item){
       item = item.trim();
@@ -158,6 +163,7 @@ let start = document.getElementById('start'),
     })
   },
   getAddIncome: function(){
+    appData.addIncome = [];
     additionalIncomeItem.forEach(function(item){
       let itemValue = item.value.trim();
       if (itemValue !== ''){
@@ -228,7 +234,8 @@ let start = document.getElementById('start'),
   consoleExpenses: function(){
     const b = appData.addExpenses.map(item => item[0].toUpperCase() + item.slice(1));
     console.log(b.join(', '));
-  }
+  },
+
 }
 
 function checkSalaryAmount(){
@@ -243,4 +250,4 @@ salaryAmount.addEventListener('change', checkSalaryAmount);
 start.addEventListener('click', appData.start);
 plusIncome.addEventListener('click', appData.addIncomeBlock);
 plusExpenses.addEventListener('click', appData.addExpensesBlock);
-periodSelect.addEventListener('change', appData.getPeriod);
+periodSelect.addEventListener('input', appData.getPeriod);
