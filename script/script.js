@@ -12,7 +12,7 @@ const start = document.getElementById("start"),
   reset = document.getElementById('cancel'),
   plusIncome = document.getElementsByTagName("button")[0],
   plusExpenses = document.getElementsByTagName("button")[1],
-  depositCheck = document.querySelector("#deposit-check"),
+  depositCheck = document.getElementById("deposit-check"),
   additionalIncomeItem = document.querySelectorAll(".additional_income-item"),
   budgetDayValue = document.querySelector(".budget_day-value"),
   budgetMonthValue = document.querySelector(".budget_month-value"),
@@ -61,10 +61,10 @@ class AppData {
     this.getExpensesMonth();
     this.getAddExpenses();
     this.getAddIncome();
+    this.getInfoDeposit();
     this.getBudget();
     this.getTargetMonth();
     this.getStatusIncome();
-    this.getInfoDeposit();
     this.consoleExpenses();
     this.showResult();
     this.endProgramm();
@@ -77,7 +77,10 @@ class AppData {
     additionalIncomeValue.value = this.addIncome.join(", ");
     targetMonthValue.value = Math.ceil(this.getTargetMonth());
     incomePeriodValue.value = this.calcSavedMoney();
-    periodSelect.addEventListener("input", () => incomePeriodValue.value = this.calcSavedMoney());
+    periodSelect.addEventListener(
+      "input",
+      () => (incomePeriodValue.value = this.calcSavedMoney())
+    );
   }
   addExpensesBlock() {
     const cloneExpensesItem = expensesItems[0].cloneNode(true);
@@ -154,7 +157,10 @@ class AppData {
     periodAmount.textContent = periodSelect.value;
   }
   getBudget() {
-    this.budgetMonth = this.budget + this.incomeMonth - this.expensesMonth;
+    const monthDeposit = this.moneyDeposit * (this.percentDeposit / 100);
+    console.log(monthDeposit);
+    
+    this.budgetMonth = this.budget + this.incomeMonth - this.expensesMonth + monthDeposit;
     this.budgetDay = this.budgetMonth / 30;
   }
   getTargetMonth() {
@@ -175,27 +181,29 @@ class AppData {
   }
   getInfoDeposit() {
     if (this.deposit) {
-      do {
-        this.percentDeposit = prompt("Какой годовой процент?", 10);
-      } while (!isNumber(+this.percentDeposit));
-      do {
-        this.moneyDeposit = prompt("Какая сумма заложена?", 10000);
-      } while (!isNumber(+this.moneyDeposit));
+      this.percentDeposit = depositPercent.value;
+      this.moneyDeposit = depositAmount.value;
+      console.log(this.percentDeposit);
+      
     }
   }
   calcSavedMoney() {
     return this.budgetMonth * periodSelect.value;
   }
   consoleExpenses() {
-    const b = this.addExpenses.map(item => item[0].toUpperCase() + item.slice(1));
+    const b = this.addExpenses.map(
+      item => item[0].toUpperCase() + item.slice(1)
+    );
   }
   endProgramm() {
-    const leftInputs = document.querySelector(".data").querySelectorAll("input[type=text]");
+    const leftInputs = document
+      .querySelector(".data")
+      .querySelectorAll("input[type=text]");
     leftInputs.forEach(item => {
       item.disabled = true;
     });
-    start.style.display = 'none';
-    reset.style.display = 'block';
+    start.style.display = "none";
+    reset.style.display = "block";
     plusExpenses.style.display = "none";
     plusIncome.style.display = "none";
   }
@@ -214,23 +222,77 @@ class AppData {
     this.incomeMonth = 0;
     periodSelect.value = 1;
     periodAmount.textContent = 1;
-    const leftInputs = document.querySelector(".data").querySelectorAll("input[type=text]"),
+    const leftInputs = document
+      .querySelector(".data")
+      .querySelectorAll("input[type=text]"),
       allTextInput = document.querySelectorAll("input[type=text]");
-    allTextInput.forEach(item => item.value = "");
-    leftInputs.forEach(item => item.disabled = false);
+    allTextInput.forEach(item => (item.value = ""));
+    leftInputs.forEach(item => (item.disabled = false));
     checkSalaryAmount();
     start.style.display = "block";
     reset.style.display = "none";
     plusExpenses.style.display = "block";
     plusIncome.style.display = "block";
+    depositCheck.checked = false;
+    this.depositHandler();
+  }
+
+  chengePercent() {
+    const valueSelect = this.value;
+    console.log(valueSelect);
+    
+    const userPercent = () =>{
+      depositPercent.value = depositPercent.value;
+      console.log(depositPercent.value);
+      if (depositPercent.value < 0 || depositPercent.value >= 100) {
+        alert("Введите корректное значение в поле проценты");
+        depositPercent.value = "";
+        start.disabled = true;
+      } else {
+        start.disabled = false;
+      }
+      return depositPercent.value;}
+    
+    if (valueSelect === "other") {
+      depositPercent.value = '';
+      depositPercent.style.display = 'inline-block';
+      depositPercent.disabled = false;
+      depositPercent.addEventListener("change", userPercent);
+      console.log(userPercent());
+
+    } else {
+      depositPercent.value = valueSelect * 100;
+      depositPercent.style.display = "none";
+      depositPercent.removeEventListener("change", userPercent);
+    }
+    
+    console.log(depositPercent.value);
+  }
+
+  depositHandler() {
+    if (depositCheck.checked) {
+      depositBank.style.display = "inline-block";
+      depositAmount.style.display = "inline-block";
+      this.deposit = true;
+      depositBank.addEventListener("change", this.chengePercent);
+    } else {
+      depositBank.style.display = "none";
+      depositAmount.style.display = "none";
+      depositBank.value = "";
+      depositAmount.value = "";
+      this.deposit = false;
+      depositBank.removeEventListener("change", this.chengePercent);
+    }
   }
   eventListeners() {
     salaryAmount.addEventListener("change", checkSalaryAmount);
+    depositCheck.addEventListener("change", this.depositHandler.bind(this));
     start.addEventListener("click", this.start.bind(this));
     reset.addEventListener("click", this.resetProgramm.bind(this));
     plusIncome.addEventListener("click", this.addIncomeBlock);
     plusExpenses.addEventListener("click", this.addExpensesBlock);
     periodSelect.addEventListener("input", this.getPeriod);
+
   }
 };
 
