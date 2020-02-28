@@ -1,9 +1,9 @@
 "use strict";
 /*
-1) Привести наш проект в соответствии с новым стандартом.
-2) Переделать наш проект под класс с помощью ключевого слова Class и Constuctor()
-3) Переменные, существующие только с неизменяемым параметром, объявить через const.
-*/
+1) Реализовать "Депозит" по практическому видеоуроку
+2) Если пользователь выбрал вариант "Другой" в списке банков, показать скрытый блок "Процент"
+3) При подсчете учитывать процент который ввел пользователь.
+4) Если пользователь ввел не число или число вне диапазона от 0 до 100, то выведите ошибку в виде alert ("Введите корректное значение в поле проценты") и запретите нажатие кнопки "Расcчитать"*/
 const isNumber = n => !isNaN(parseFloat(n)) && isFinite(n);
 
 // const isEmpty = str => (str.trim() === "");
@@ -159,7 +159,7 @@ class AppData {
   getBudget() {
     const monthDeposit = this.moneyDeposit * (this.percentDeposit / 100);
     console.log(monthDeposit);
-    
+
     this.budgetMonth = this.budget + this.incomeMonth - this.expensesMonth + monthDeposit;
     this.budgetDay = this.budgetMonth / 30;
   }
@@ -184,7 +184,7 @@ class AppData {
       this.percentDeposit = depositPercent.value;
       this.moneyDeposit = depositAmount.value;
       console.log(this.percentDeposit);
-      
+
     }
   }
   calcSavedMoney() {
@@ -206,6 +206,8 @@ class AppData {
     reset.style.display = "block";
     plusExpenses.style.display = "none";
     plusIncome.style.display = "none";
+    depositCheck.disabled = 'true';
+    depositBank.disabled = 'true';
   }
   resetProgramm() {
     this.income = {};
@@ -235,13 +237,27 @@ class AppData {
     plusIncome.style.display = "block";
     depositCheck.checked = false;
     this.depositHandler();
+
+    let incomeItemsArray = Array.prototype.slice.call(incomeItems);
+    incomeItemsArray.forEach( (item, i) => {
+      if (i > 0) {
+        incomeItems[0].parentNode.removeChild(item);
+      }
+    });
+
+    let expensesItemsArray = Array.prototype.slice.call(expensesItems);
+    expensesItemsArray.forEach( (item, i) => {
+      if (i > 0) {
+        expensesItems[0].parentNode.removeChild(item);
+      }
+    });
   }
 
   chengePercent() {
     const valueSelect = this.value;
     console.log(valueSelect);
-    
-    const userPercent = () =>{
+
+    const userPercent = () => {
       depositPercent.value = depositPercent.value;
       console.log(depositPercent.value);
       if (depositPercent.value < 0 || depositPercent.value >= 100) {
@@ -251,8 +267,9 @@ class AppData {
       } else {
         start.disabled = false;
       }
-      return depositPercent.value;}
-    
+      return depositPercent.value;
+    }
+
     if (valueSelect === "other") {
       depositPercent.value = '';
       depositPercent.style.display = 'inline-block';
@@ -265,7 +282,7 @@ class AppData {
       depositPercent.style.display = "none";
       depositPercent.removeEventListener("change", userPercent);
     }
-    
+
     console.log(depositPercent.value);
   }
 
@@ -285,7 +302,7 @@ class AppData {
     }
   }
   eventListeners() {
-    salaryAmount.addEventListener("change", checkSalaryAmount);
+    salaryAmount.addEventListener("input", checkSalaryAmount);
     depositCheck.addEventListener("change", this.depositHandler.bind(this));
     start.addEventListener("click", this.start.bind(this));
     reset.addEventListener("click", this.resetProgramm.bind(this));
