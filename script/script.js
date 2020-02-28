@@ -206,8 +206,8 @@ class AppData {
     reset.style.display = "block";
     plusExpenses.style.display = "none";
     plusIncome.style.display = "none";
-    depositCheck.disabled = 'true';
-    depositBank.disabled = 'true';
+    depositCheck.disabled = true;
+    depositBank.disabled = true;
   }
   resetProgramm() {
     this.income = {};
@@ -237,6 +237,9 @@ class AppData {
     plusIncome.style.display = "block";
     depositCheck.checked = false;
     this.depositHandler();
+    depositCheck.disabled = false;
+    depositBank.disabled = false;
+    depositPercent.style.display = "none";
 
     let incomeItemsArray = Array.prototype.slice.call(incomeItems);
     incomeItemsArray.forEach( (item, i) => {
